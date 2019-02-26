@@ -87,3 +87,25 @@ export function orderObjArrMinus (property) {
 }
 // 使用
 objArr.sort(orderObjArrMinus(property))
+
+/**
+ * 8.深拷贝
+ */
+ // 1,简单结构，使用concat，slice等可以产生新的内存空间的方法
+ // 2.对象--字符--对象，不适用于方法
+ var new_arr = JSON.parse(JSON.stringify(arr))
+ // 3.递归深拷贝
+ var deepCopy = function(obj) {
+  // 只拷贝对象
+  if (typeof obj !== 'object') return;
+  // 根据obj的类型判断是新建一个数组还是一个对象
+  var newObj = obj instanceof Array ? [] : {};
+  for (var key in obj) {
+    // 遍历obj,并且判断是obj的属性才拷贝
+    if (obj.hasOwnProperty(key)) {
+      // 判断属性值的类型，如果是对象递归调用深拷贝
+      newObj[key] = typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
+    }
+  }
+  return newObj;
+}
