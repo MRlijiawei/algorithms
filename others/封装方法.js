@@ -109,3 +109,20 @@ objArr.sort(orderObjArrMinus(property))
   }
   return newObj;
 }
+
+/**
+ * 9.合并多个数组，判断条件propt不相等，非必填
+ */
+function combineArr(propt, arrs) {
+  const newArr = []
+  arrs.forEach(e => {
+    e.forEach(el => {
+      if (newArr.filter(na => {
+        return propt ? na[propt] === el[propt] : na === el
+      }).length === 0) {
+        newArr.push(el)
+      }
+    })
+  })
+  return newArr
+}
