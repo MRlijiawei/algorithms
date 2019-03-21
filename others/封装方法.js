@@ -14,7 +14,7 @@ function searchL(a, b) {
 *let a = [];
 *push(a, 1, 2, 3);
 */
-function pushL(array, ...items)) {
+function pushL(array, ...items) {
 	items.forEach(function(item) {
 		array.push(item);
 	});
@@ -126,3 +126,12 @@ function combineArr(propt, arrs) {
   })
   return newArr
 }
+
+/**
+ * 10.判断变量类型
+ */
+ function getType(variable) {
+ 	// [object xxxxxx]
+ 	let theType = Object.prototype.toString.call(variable)
+ 	return theType.substring(8, theType.length - 1)
+ }
