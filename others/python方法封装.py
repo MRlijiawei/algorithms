@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #############################
 # 1.判断变量的类型isinstance #
 #############################
@@ -95,3 +96,29 @@ print("{0}是{1}".format(dictory,getType(dictory)))
 #判断变量是否为集合
 apple={"apple1","apple2"}
 print("{0}是{1}".format(apple,getType(apple)))
+
+#######################
+# 3.汉诺塔            #
+#######################
+def move(n, a, b, c):
+　　　　if n == 1:
+　　　　　　print(a, '-->', c)
+　　　　else:
+　　　　　　move(n-1, a, c, b)
+　　　　　　move(1, a, b, c)
+　　　　　　move(n-1, b, a, c)
+
+#######################
+# 计算一元二次方程的解  #
+#######################
+import math
+
+def quadratic(a, b, c):
+    if a == 0:
+        return "a不能等于0"
+    d = b*b - 4*a*c
+    if d < 0:
+        return "此方程无解"
+    result1 = (-b + math.sqrt(d))/(2*a)
+    result2 = (-b - math.sqrt(d))/(2*a)
+    return result1, result
