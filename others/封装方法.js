@@ -135,3 +135,14 @@ function combineArr(propt, arrs) {
  	let theType = Object.prototype.toString.call(variable)
  	return theType.substring(8, theType.length - 1)
  }
+
+ /*
+	11.颜色反转
+	算法原理：0xFFFFFF-oldColor 格式化成16进制
+ */
+function colorReverse(oldColor){
+	var oldColor="0x"+OldColorValue.replace(/#/g,"");
+	var str="000000"+(0xFFFFFF-oldColor).toString(16);
+	// 不带#
+	return str.substring(str.length-6,str.length);
+}
