@@ -91,7 +91,7 @@ objArr.sort(orderObjArrMinus(property))
 /**
  * 8.深拷贝
  */
- // 1,简单结构，使用concat，slice等可以产生新的内存空间的方法
+ // 1,简单结构，使用concat，slice、JSON.parse,stringify等可以产生新的内存空间的方法
  // 2.对象--字符--对象，不适用于方法
  var new_arr = JSON.parse(JSON.stringify(arr))
  // 3.递归深拷贝
@@ -112,6 +112,7 @@ objArr.sort(orderObjArrMinus(property))
 
 /**
  * 9.合并多个数组，判断条件propt不相等，非必填
+ 也可以把数组push在一起形成多维数组，然后join再split，见12
  */
 function combineArr(propt, arrs) {
   const newArr = []
@@ -146,3 +147,15 @@ function colorReverse(oldColor){
 	// 不带#
 	return str.substring(str.length-6,str.length);
 }
+
+/**
+	12.多维数组取最大值
+*/
+function getMax() {
+	// 不限定参数个数写法，可以传入任意多个任意数组
+	const a = Array.apply([],arguments).join(",").split(",")
+	return Math.max.apply(null, a)
+}
+//var a = [1,2,3,[5,6],[1,4,8]];
+//var ta = a.join(",").split(",");//降维，转化为一维数组
+//console.log(Math.max.apply(null, ta));//最大值。当然也可以用最基本的for循环
