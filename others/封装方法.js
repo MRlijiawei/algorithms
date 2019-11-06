@@ -127,6 +127,10 @@ function combineArr(propt, arrs) {
   })
   return newArr
 }
+//方法2
+var arr1=new Array("1","2","3");
+var arr2=new Array("4","5","6");
+console.debug(Array.prototype.push.apply(arr1,arr2))
 
 /**
  * 10.判断变量类型
@@ -159,3 +163,10 @@ function getMax() {
 //var a = [1,2,3,[5,6],[1,4,8]];
 //var ta = a.join(",").split(",");//降维，转化为一维数组
 //console.log(Math.max.apply(null, ta));//最大值。当然也可以用最基本的for循环
+
+/* 13.数组求和*/
+function sumArray(arr) {
+	return arr.reduce(function(a,b,c,d){return a+b})
+}
+
+//数组去重、排序
