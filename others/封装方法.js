@@ -169,4 +169,26 @@ function sumArray(arr) {
 	return arr.reduce(function(a,b,c,d){return a+b})
 }
 
+/*13.阶乘*/
+function factorical(num) {
+	if (num <=1) {
+		return 1
+	} else {
+		return num * arguments.callee(num - 1)
+		//return num * factorical(num - 1)一般使用上边写法，消除紧密耦合，且在将方法赋值给别的变量时不需要再关心原方法名
+	}
+}
+
+/*14.范围取随机数，数组中随机取（也可指定下标范围）*/
+// 包括首尾的随机数
+function selectFrom(lo, up) {
+	var choice = up - lo + 1
+	return Math.floor(Math.random() * choice + lo)
+}
+// 使用：
+selectFrom(3, 8)
+// 用于数组
+var arr = []
+arr[selectFrom(0, arr.length - 1)]
+
 //数组去重、排序
