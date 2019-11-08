@@ -191,4 +191,10 @@ selectFrom(3, 8)
 var arr = []
 arr[selectFrom(0, arr.length - 1)]
 
+/*15.检验字符串是否以某字符（串）开头*/
+// 绑定到String原型上
+String.prototype.startWith = function (txt) {
+	return this.indexOf(txt) === 0
+}
+// 'Hello world'.startWith('Hello')//true
 //数组去重、排序
