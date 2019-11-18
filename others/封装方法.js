@@ -196,5 +196,25 @@ arr[selectFrom(0, arr.length - 1)]
 String.prototype.startWith = function (txt) {
 	return this.indexOf(txt) === 0
 }
+
+/*16.取url参数*/
+/*
+ * 取url参数
+ */
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var reg_rewrite = new RegExp("(^|/)" + name + "/([^/]*)(/|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    var q = window.location.pathname.substr(1).match(reg_rewrite);
+    if(r != null){
+        return unescape(r[2]);
+    }else if(q != null){
+        return unescape(q[2]);
+    }else{
+        return null;
+    }
+}
+
+
 // 'Hello world'.startWith('Hello')//true
 //数组去重、排序
