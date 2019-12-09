@@ -215,6 +215,32 @@ function getQueryString(name) {
     }
 }
 
+/*17.能力检测*/
+/*
+ * 检测是否是某对象的方法。如：isHostMethod(xhr, 'open')
+ */
+function isHostMethod(object, property) {
+	var t = typeof object[property]
+	return t == 'function' || (!!(t == 'object' && object[property])) || t == 'unknown'//IE中xhr.open返回unknown
+}
+
+/*18.节点元素转数组*/
+/*
+ * 将html节点转化为真正的Array数组
+ */
+function convertToArray(nodes) {
+	var array = null
+	try{
+		array = Array.prototype.slice.call(nodes, 0)//非IE
+	} catch(ex) {
+		array = new Array()
+		for (var i=0,len = nodes.length;i<len;i++) {
+			array.push(nodes[i])
+		}
+	}
+	return array
+}
+
 
 // 'Hello world'.startWith('Hello')//true
 //数组去重、排序
