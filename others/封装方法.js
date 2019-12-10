@@ -196,6 +196,7 @@ arr[selectFrom(0, arr.length - 1)]
 String.prototype.startWith = function (txt) {
 	return this.indexOf(txt) === 0
 }
+// 'Hello world'.startWith('Hello')//true
 
 /*16.取url参数*/
 /*
@@ -241,6 +242,75 @@ function convertToArray(nodes) {
 	return array
 }
 
+/*19.动态脚本和样式*/
+/*
+ * 动态插入JS和css
+ */
+function loadScript(url) {
+	var script = document.createElement('script')
+	script.type = 'text/javascript'
+	script.src = url
+	document.body.appendChild(script)
+}
+// 判断是否加载完成？
 
-// 'Hello world'.startWith('Hello')//true
+function loadScriptString(code) {
+	var script = document.createElement('script')
+	script.type = 'text/javascript'
+	try {
+		script.appendChild(document.createTextNode(code))
+	} catch (ex) {
+		script.text = code//兼容IE
+	}
+	document.body.appendChild(script)
+}
+
+function loadStyles(url) {
+	var link = document.createElement('link')
+	link.rel = 'stylesheet'
+	link.type = 'text/css'
+	link.href = url
+	document.getElementsByTagName('head')[0].appendChild(link)
+}
+// css是异步加载的，不需要关系什么时候加载完成的问题
+function loadStyleString(css) {
+	var style = document.createElement('style')
+	style.type = 'text/css'
+	try {
+		style.appendChild(document.createTextNode(css))
+	} catch (ex) {
+		style.styleSheet.cssText = css// 兼容IE。另外，ie中重复设置一个style的属性或设置为空时容易崩溃
+	}
+	document.getElementsByTagName('head')[0].appendChild(style)
+}
+
+/*19.matchSelector兼容性封装*/
+/*
+ * 
+ */
+function matchesSelector(ele, selector) {
+	if (ele.matchesSelector) {
+		return ele.matchesSelector(selector)
+	} else if (ele.msMatchesSelector) {
+		return ele.msMatchesSelector(selector)
+	} else if (ele.mozMatchesSelector) {
+		return ele.mozMatchesSelector(selector)
+	} else if (ele.webkitMatchesSelector) {
+		return ele.webkitMatchesSelector(selector)
+	} else {
+		throw new Error('xxx')
+	}
+}
+/*20.插入样式*/
+/*删除是deleteRule和removeRule，参数是index
+ * 
+ */
+function insertRule(sheet, selectorText, cssText, position) {
+	if (sheet.insertRule){
+		sheet.insertRule(selectorText+'{'+cssText+'}',position)
+	} else if (sheet.addRule) {
+		sheet.addRule(selectorText, cssText, position)
+	}
+}
+
 //数组去重、排序
