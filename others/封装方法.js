@@ -313,4 +313,150 @@ function insertRule(sheet, selectorText, cssText, position) {
 	}
 }
 
+/*20.跨浏览器的事件处理程序*/
+/*跨浏览器的事件处理程序
+ * 
+ */
+var EventUtil = {
+	addHandler: function(ele, type, handler) {
+		if (ele.addEventListener) {
+			ele.addEventListener(type, handler, false)
+		} else if (ele.attachEvent) {
+			element.attachEvent('on'+type, handler)
+		} else {
+			element['on'+type] = handler
+		}
+	},
+	removeHandler: function(ele, type, handler) {
+		if (ele.removeEventListener) {
+			ele.removeEventListener(type, handler, false)
+		} else if (ele.detachEvent) {
+			element.detachEvent('on'+type, handler)
+		} else {
+			element['on'+type] = null
+		}
+	},
+	getEvent: function(event) {
+		return event ? event : window.event
+	},
+	// 下边几个event入参是上边getEvent获取到的event
+	getTarget: function(event) {
+		return event.target || event.srcElement
+	},
+	preventDefault: function(event) {
+		if (event.preventDefault) {
+			event.preventDefault()
+		} else {
+			event.returnValue = false
+		}
+	},
+	stopPropagation: function(event) {
+		if (event.stopPropagation) {
+			event.stopPrppagation()
+		} else {
+			event.cancelBubble = true
+		}
+	},
+	getRelatedTarget: function(event) {
+		if (event.relatedTarget) {
+			return event.relatedTarget
+		} else if (event.toElement) {
+			return event.toElement
+		} else if (event.fromElement) {
+			return event.fromElement
+		} else {
+			return null
+		}
+	},
+	// 按下的是哪个键的区分
+	getButton: function(event) {
+		if (document.implementation.hasFeature('MouseEvents', '2.0')) {
+			return event.button
+		} else {
+			switch (event.button) {
+				case 0:
+				case 1:
+				case 3:
+				case 5:
+				case 7:
+					return 0
+				case 2:
+				case 6:
+					return 2
+				case 4:
+					return 1
+			}
+		}
+	},
+	// 滚轮滚动
+	getWheelDelta: function(event) {
+		if (event.wheelDelta) {
+			return (client.engine.opera && client.engine.opera < 9.5 ? -event.wheelDelta : event.wheelDelta)
+		} else {
+			return -event.detail * 40
+		}
+	},
+	// 剪贴板
+	getClipbordData: function(event, type='text') {
+		var clipbordData = event.clipbordData || window.clipbordData
+		return clipbordData.getData(type)
+	},
+	setClipbordData: function(event, value) {
+		if (event.clipbordData) {
+			// 返回的值是成功失败的布尔值
+			return event.clipbordData.setData('text/plain', value)
+		} else if (window.clipbordData) {
+			return window.clipbordData.setData('text', value)
+		}
+	}
+}
+
+/*21.获取文本框选择的文本；选择问吧*/
+function getSelectedText(textbox) {
+	if (typeof textbox.selectionStart == 'number') {
+		return textbox.value.substring(textbox.selectionStart, textbox.selectionEnd)
+	} else if (document.selection) {
+		// IE8及以前
+		return document.selection.createRange().text
+	}
+}
+function selectText(textbox, start, end) {
+	if (textbox.setSelectionRange) {
+		textbox.setSelectionRange(start, end)
+	} else if (textbox.createTextRange) {
+		var range = textbox.createTextRange()
+		range.collapse(true)
+		range.moveStart('character', start)
+		range.moveEnd('character', end - start)
+		range.select()
+	}
+	textbox.focus()
+}
+
+/*22.表单输入框自动切换焦点*/
+(function() {
+	function tabForward(event) {
+		event = EventUtil.getEvent(event)
+		var target = EventUtil.getTarget(event)
+		if (target.value.length === target.maxlength) {
+			var form = target.form
+			for (var i=0, len = form.elements.length; i < len; i++) {
+				if (form.elements[i] === target) {
+					if (form.elements[i+1]) {
+						form.elements[i+1].focus()
+					}
+					return
+				}
+			}
+		}
+	}
+
+	var textbox1 = document.getElementById('xxx')
+	var textbox2 = document.getElementById('xxx')
+
+	EventUtil.addHandler(textbox1, 'keyup', tabForward)
+	EventUtil.addHandler(textbox2, 'keyup', tabForward)
+})()
+
+
 //数组去重、排序
