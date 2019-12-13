@@ -458,5 +458,27 @@ function selectText(textbox, start, end) {
 	EventUtil.addHandler(textbox2, 'keyup', tabForward)
 })()
 
+/*22.图像转黑白*/
+function getBWImg(image) {
+	var canvas = document.createElement('canvas')
+	canvas.width = image.width
+	canvas.height = image.height
+	var context = canvas.getContext('2d')
+	context.drawImage(image, 0, 0)
+	var imageData = context.getImageData(0,0,image.width,image.height)
+	var data = imageData.data
+	var average
+	for(var i=0,len = data.length;i<len;i+=4) {
+		average = Math.floor((data[i]+data[i+1]+data[i+2])/3)
+		data[i] = average
+		data[i+1] = average
+		data[i+2] = average
+	}
+	imageData.data = data
+	context.putImageData(imageData,0,0)
+	image.src = canvas.toDataURL('image/png')
+	canvas.remove()
+}
+
 
 //数组去重、排序
