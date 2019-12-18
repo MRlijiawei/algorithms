@@ -476,9 +476,231 @@ function getBWImg(image) {
 	}
 	imageData.data = data
 	context.putImageData(imageData,0,0)
+	// 宽高应该需要设置一下再转base64
 	image.src = canvas.toDataURL('image/png')
 	canvas.remove()
 }
 
+/*23.跨域请求封装*/
+function createCORSRequest(method, url) {
+	var xhr = new XMLHttpRequest()
+	if ('withCredentails' in xhr) {
+		xhr.open(method, url, true)
+	} else if (typeof XDomainRequest != 'undefined') {
+		xhr = new XDomainRequest()
+		xhr.open(method, url)
+	} else {
+		xhr = null
+	}
+}
+
+/**
+24.自定义事件
+**/
+function EventTarget() {
+	this.handlers = {}
+}
+EventTarget.prototype = {
+	contructor: EventTarget,
+	addHandler: function(type, handler) {
+		if (typeof this.handlers[type] === 'undefined') {
+			this.handlers[type] = []
+		}
+		this.handlers[type].push(handler)
+	},
+	// 触发
+	fire: function(event) {
+		if (!event.target) {
+			event.target = this
+		}
+		if (this.handlers[event.type] instanceof Array) {
+			var handlers = this.handlers[event.type]
+			for (var i=0, len=handlers.length; i<len; i++) {
+				handlers[i](event)
+			}
+		}
+	},
+	removeHandler: function(type, handler) {
+		if (this.handlers[type] instanceof Array) {
+			var handlers = this.handlers[type]
+			for (var i=0, len=handlers.length; i<len; i++) {
+				if (handlers[i] === handler) {
+					break
+				}
+			}
+			handlers.splice(i, 1)
+		}
+	}
+}
+
+/**
+25.结合自定义事件的拖拽封装
+class:draggable {position:absolute}
+**/
+var DragDrop = function() {
+	// 在自定义事件的基础上
+	var dragdrop = new EventTarget(),
+		dragging = null,
+		diffx = 0,
+		diffy = 0
+	function handleEvent(event) {
+		event = EventUtil.getEvent(event)
+		var target = EventUtil.getTarget(event)
+		switch (event.type) {
+			case 'mousedown':
+				if (target.className.indexOf('draggable') > -1) {
+					dragging = target
+					diffx = event.clientX - target.offsetLeft
+					diffy = event.clientY - target.offsetTop
+					dragdrop.fire({type: 'dragstart', target: dragging, x: event.clientX, y: event.clientY})
+				}
+				break
+			case 'mousemove':
+				if (dragging !== null) {
+					// 指定位置
+					dragging.style.left = (event.clientX - diffx) + 'px'
+					dragging.style.top = (event.clientY - diffy) + 'px'
+					// 触发自定义事件
+					dragdrop.fire({type: 'drag', target: dragging, x: event.clientX, y: event.clientY})
+				}
+				break
+			case 'mouseup':
+				dragdrop.fire({type: 'dragend', target: dragging, x: event.clientX, y: event.clientY})
+				dragging = null
+				break
+		}
+	}
+	// 公共接口
+	dragdrop.enable = function() {
+		EventUtil.addHandler(document, 'mousedown', handleEvent)
+		EventUtil.addHandler(document, 'mousemove', handleEvent)
+		EventUtil.addHandler(document, 'mouseup', handleEvent)
+	}
+	dragdrop.disable = function() {
+		EventUtil.removeHandler(document, 'mousedown', handleEvent)
+		EventUtil.removeHandler(document, 'mousemove', handleEvent)
+		EventUtil.removeHandler(document, 'mouseup', handleEvent)
+	}
+	return dragdrop
+}
+/**
+26.cookie，子cookie
+子cookie通过&连接
+**/
+var CookieUtil = {
+	get: function(name) {
+		var cookieName = encodeURIComponent(name) + '=',
+			cookieStart = document.cookie.indexOf(cookieName),
+			cookieValue = null
+		if (cookieStart > -1) {
+			var cookieEnd = document.cookie.indexOf(';', cookieStart)
+			if (cookieEnd === -1) {
+				cookie = document.cookie.length
+			}
+			cookieValue = decodeURIComponent(document.cookie.substring(cookieStart + cookieName.length, cookieEnd))
+		}
+		return cookieValue
+	},
+	set: function(name, value, expires, path, domain, secure) {
+		var cookieText = encodeURIComponent(name) + '=' + encodeURIComponent(value)
+		if (expires instanceof date) {
+			cookieText += '; expires=' + expires.toGMTString()
+		}
+		if (path) {
+			cookieText += '; path=' + path
+		}
+		if (domain) {
+			cookieText += '; domain=' + domain
+		}
+		if (secure) {
+			cookieText += '; secure'
+		}
+		document.cookie = cookieText
+	},
+	unset: function(name, path, domain, secure) {
+		this.set(name, '', new Date(0), path, domain, secure)
+	}
+}
+
+var SubCookieUtil = {
+	get: function(name, subName) {
+		var subCookies = this.getAll(name)
+		if (subCookies) {
+			return subCookies[subName]
+		} else {
+			return null
+		}
+	},
+	getAll: function(name) {
+		var cookieName = encodeURIComponent(name) + '=',
+			cookieStart = document.cookie.indexOf(cookieName),
+			cookieValue = null,
+			cookieEnd,
+			subCookies,
+			i,
+			parts,
+			result = {}
+
+		if (cookieStart > -1) {
+			cookieEnd = document.cookie.indexOf(';', cookieStart)
+			if (cookieEnd == -1) {
+				cookieEnd = document.cookie.length
+			}
+			cookieValue = document.cookie.substring(cookieStart + cookieName.length, cookieEnd)
+			if (cookieValue.length > 0) {
+				subCookies = cookieValue.split('&')
+				for (i=0,len=subCookies.length;i<len;i++) {
+					parts = subCookies[i].split('=')
+					result[decodeURIComponent(parts[0])] = decodeURIComponent(parts[1])
+				}
+				return result
+			}
+		}
+		return null
+	},
+	set: function(name, subName, value, expires, path, domain, secure) {
+		var subCookies = this.getAll(name) || {}
+		subCookies[subName] = value
+		this.setAll(name, subCookies, expires, path, domain, secure)
+	},
+	setAll: function(name, subCookies, expires, path, domain, secure) {
+		var cookieText = encodeURIComponent(name) + '=',
+			subCookiesParts = new Array(),
+			subName
+		for (subName in subCookies) {
+			if (subName.length > 0 && subCookies.hasOwnProperty(subName)) {
+				subCookiesParts.push(encodeURIComponent(subName) + '=' + encodeURIComponent(subCookies[subName]))
+			}
+		}
+		if (subCookiesParts.length > 0) {
+			cookieText += subCookiesParts.join('&')
+			if (expires instanceof date) {
+				cookieText += '; expires=' + expires.toGMTString()
+			}
+			if (path) {
+				cookieText += '; path=' + path
+			}
+			if (domain) {
+				cookieText += '; domain=' + domain
+			}
+			if (secure) {
+				cookieText += '; secure'
+			}
+		} else {
+			cookieText += '; expires=' + new Date(0).toGMTString()
+		}
+		document.cookie = cookieText
+	},
+	unset: function(name, subName, path, domain, secure) {
+		var subCookies = this.getAll(name)
+		if (subCookies) {
+			delete subCookies[subName]
+			this.setAll(name, subCookies, null, path, domain, secure)
+		}
+	},
+	unsetAll: function(name, path, domain, secure) {
+		this.setAll(name, null, new Date(0), path, domain, secure)
+	}
+}
 
 //数组去重、排序
