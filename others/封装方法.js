@@ -703,4 +703,71 @@ var SubCookieUtil = {
 	}
 }
 
+/**
+27.Duff装置--展开循环，将循环变少以降低空间复杂度，提高效率
+先假设数组长度大于1
+此方法适用于大数据集，否则数据量小的时候反而会损失性能
+*/
+function duffArr(arr, dowhat) {
+	var iterations = Math.ceil(arr.length / 8)
+	var startAt = arr.length % 8
+	var i = 0
+	do {
+		switch (startAt) {
+			case 0: dowhat(arr[i++])
+			case 7: dowhat(arr[i++])
+			case 6: dowhat(arr[i++])
+			case 5: dowhat(arr[i++])
+			case 4: dowhat(arr[i++])
+			case 3: dowhat(arr[i++])
+			case 2: dowhat(arr[i++])
+			case 1: dowhat(arr[i++])
+		}
+		startAt = 0
+	} while (--iterations > 0)
+}
+// 更快的duff装置技术
+function duffArr2(arr, dowhat) {
+	var iterations = Math.ceil(arr.length / 8)
+	var leftover = arr.length % 8
+	var i = 0
+	if (leftover > 0) {
+		do {
+			dowhat(arr[i++])
+		} while (--leftover > 0)
+	}
+	do {
+		dowhat(arr[i++])
+		dowhat(arr[i++])
+		dowhat(arr[i++])
+		dowhat(arr[i++])
+		dowhat(arr[i++])
+		dowhat(arr[i++])
+		dowhat(arr[i++])
+		dowhat(arr[i++])
+	} while (--iterations > 0)
+}
+
+/**
+28.平滑动画
+*/
+(function() {
+	function draw(timestamp) {
+		// 计算两次重绘时间间隔
+		var drawStart = (timestamp || Date.now()),
+			diff = drawStart - startTime
+
+		// 使用diff确定下一次重绘时间（，及一些绘制操作）
+
+		startTime = drawStart
+		requestAnimationFrame(draw)
+	}
+	var requestAnimationFrame = window.requestAnimationFrame ||
+								window.mozRequestionAnimationFrame || 
+								window.webkitRequestionAnimationFrame || 
+								window.msRequestionAnimationFrame,
+		startTime = window.mozAnimationStartTime || Date.now()
+	requestAnimationFrame(draw)
+})()
+
 //数组去重、排序
