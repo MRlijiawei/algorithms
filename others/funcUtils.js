@@ -777,4 +777,15 @@ var getRandomColor = function(){
   return '#'+Math.floor(Math.random()*16777215).toString(16); 
 }
 
+/**
+	30.数组常见方法封装 -- TODO 将各类方法按类别重新封装然后合成一个easyTool插件
+*/
+var ArrayUtil = {
+	// 降维打击，扁平化
+	flat: function(arr) {
+
+	}
+}
+
+
 //数组去重、排序
