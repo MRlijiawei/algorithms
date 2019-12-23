@@ -770,4 +770,11 @@ function duffArr2(arr, dowhat) {
 	requestAnimationFrame(draw)
 })()
 
+/**
+	29.取随机颜色
+*/
+var getRandomColor = function(){
+  return '#'+Math.floor(Math.random()*16777215).toString(16); 
+}
+
 //数组去重、排序
