@@ -941,7 +941,7 @@ import {area} = './circle.js'
 console.log(`圆形面积:${area(2)}`)
 
 /**
- *31.迭代器生成器示例
+ *32.迭代器生成器示例
  */
 // stage1
 function *makeRangeIterator(start = 0, end = Infinity, step = 1) {
@@ -973,7 +973,7 @@ let iterator = createIterator()
 console.log(iterator.next().value) //1
 
 /**
- *32.Proxy/Reflect示例
+ *33.Proxy/Reflect示例
  */
 // Proxy/Reflect示例 -- TODO -- 详细了解https://www.cnblogs.com/huansky/p/5687299.html
 const observe = (data, callback) => {
@@ -999,7 +999,7 @@ console.log(FooBarObserver.open) // false
 FooBarObserver.open = true // FooBar is open!!!
 
 /**
- *33.处理图片数据（初步）
+ *34.处理图片数据（初步）
  */
 async function myFetch(url) {
       let response = await fetch(url)
@@ -1013,7 +1013,7 @@ async function myFetch(url) {
 // myFetch('coffee.jpg')
 
 /**
- *34.数据加密
+ *35.数据加密
  *@ str-目标字符串
  *@ len-要保留的长度
  */
@@ -1022,6 +1022,43 @@ function encryStr(str, len, aimFlag = '*') {
 	const maskedNumber = lastDigits.padStart(str.length, aimFlag)
 	return maskedNumber
 }
+
+/**
+ *36.计数器，#是ES10的私有
+ */
+class Counter extends HTMLElement {
+      #xValue = 0
+
+      get #x() { 
+          return #xValue
+      }
+      set #x(value) {
+            this.#xValue = value
+            window.requestAnimationFrame(this.#render.bind(this))
+      }
+
+      #clicked() {
+            this.#x++
+      }
+
+      constructor() {
+            super();
+            this.onclick = this.#clicked.bind(this)
+      }
+
+      connectedCallback() { 
+              this.#render()
+      }
+
+      #render() {
+            this.textContent = this.#x.toString()
+      }
+}
+window.customElements.define('num-counter', Counter)
+
+/**
+ *37.记住滚动位置$("html,body").animate({"scrollTop":0})；document.scrollingElement.scrollTop；document.documentElement.scrollTop||document.body.scrollTop
+ */
 
 
 // StringUtil,match,search,(charAt,indexOf)
