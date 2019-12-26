@@ -1058,6 +1058,7 @@ window.customElements.define('num-counter', Counter)
 
 /**
  *37.记住滚动位置$("html,body").animate({"scrollTop":0})；document.scrollingElement.scrollTop；document.documentElement.scrollTop||document.body.scrollTop
+ $(this).addClass('curr-p-xf').siblings().removeClass('curr-p-xf');浏览器的记忆滚动位置：history.scrollRestoration = 'manual'取消//默认auto记忆
  */
 
 
