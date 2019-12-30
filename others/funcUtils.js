@@ -1060,6 +1060,10 @@ window.customElements.define('num-counter', Counter)
  *37.记住滚动位置$("html,body").animate({"scrollTop":0})；document.scrollingElement.scrollTop；document.documentElement.scrollTop||document.body.scrollTop
  $(this).addClass('curr-p-xf').siblings().removeClass('curr-p-xf');浏览器的记忆滚动位置：history.scrollRestoration = 'manual'取消//默认auto记忆
  */
-
+ /* 鼠标指针
+ body {
+    cursor: url("path_to_your_image"), default;
+}*/
+// TODO，页面列表滚动，上下定时滚动，有超出则穿插左右滚动
 
 // StringUtil,match,search,(charAt,indexOf)
