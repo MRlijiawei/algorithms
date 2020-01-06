@@ -109,6 +109,11 @@ objArr.sort(orderObjArrMinus(property))
   }
   return newObj;
 }
+// 浅拷贝一个对象
+Object.create(
+  Object.getPrototypeOf(obj), 
+  Object.getOwnPropertyDescriptors(obj) 
+)
 
 /**
  * 9.合并多个数组，判断条件propt不相等，非必填
@@ -781,11 +786,284 @@ var getRandomColor = function(){
 	30.数组常见方法封装 -- TODO 将各类方法按类别重新封装然后合成一个easyTool插件
 */
 var ArrayUtil = {
-	// 降维打击，扁平化
-	flat: function(arr) {
+	// 降维打击，扁平化，ES10新增，Array.flat(n)，n表示维度，数字或Infinity无限大
+	flat: function(arr, n) {
+		if (arr.flat) {
+			return arr.flat(n)
+		} else {
+			// 原理
+			function flatten(arr) {
+				while (arr.some(item=>Array.isArray(item0))) {
+					// 基于ES6
+					arr = [].concat(...arr)
+				}
+				return arr
+			}
+			return flatten(arr)
+		}
+	},
+	// 去重
+	disRepeat: function(arr) {
+		if (Array.from) {
+			return Array.from(new Set(arr)) // [...new Set(arr)]效果相同。均是基于ES6
+		} else {
+			// 原理
+			Array.prototype.distinct = function() {
+				let arr = this,
+					result = [],
+					i,
+					j,
+					len = arr.length
+				for (i=0;i<len;i++) {
+					for (j=i+1;j<length;j++) {
+						if (arr[i] === arr[j]) {
+							j = ++i
+						}
+					}
+					result.push(arr[i])
+				}
+				return result
+			}// [1,2,3,3].distinct()// [1,2,3]
+			return arr.distinct()
+		}
+	},
+	// 排序
+	sort: function(arr, f) {
+		// sort默认升序，参数是函数。f表示是否降序
+		if (f) {
+			return arr.sort((a,b) => b-a)// 降序
+		} else {
+			return arr.sort()
+		}
+		// 排序原理：
+		// 冒泡排序:
+		Arry.prototype.bubleSort = function() {
+			let arr = this,
+				len = arr.length,
+				outer,
+				inner
+			for (outer = len;outer>=2;outer--) {
+				for (inner = 0;inner<=outer-1;inner++) {
+					if ((arr[inner] > arr[inner+1] && !f)||(arr[inner] < arr[inner+1] && f)) {
+						[arr[inner], arr[inner+1]] = [arr[inner+1], arr[inner]]
+					}
+				}
+			}
+			return arr
+		}// [1,3,2].bubleSort()
+		// 选择排序：
+		Array.prototype.selectSort = function() {
+			let arr = this,
+				len = arr.length,
+				i,
+				j
+			for (i = 0; i < len-1; i++) {
+				for (j = i+1; j < len; j++) {
+					if ((arr[i] > arr[j] && !f)||(arr[i] < arr[j] && f)) {
+						[arr[i], arr[j]] = [arr[j], arr[i]]
+					}
+				}
+			}
+			return arr
+		}
+	},
+	// 最大、小值
+	getMax: function(arr) {
+		// return Math.max(...arr) // ES6
+		return Math.max.apply(this, arr)
+		// return arr.reduce((prev, cur, curIndex, ar)=>{return Math.max(prev, cur)}, 0)// ES5
+		// 原理：先排序再取值。Min同理
+	},
+	// 求和
+	getSum: function(arr) {
+		if (arr.reduce) {
+			return arr.reduce((prev, cur) => { return prev + cur }, 0)
+		} else {
+			function sum(arr) {
+				let len = arr.length
+				if (len === 0) {
+					return 0
+				} else if (len === 1) {
+					return arr[0]
+				} else {
+					// 递归
+					return arr[0] + sum(arr.slice(1))
+				}
+			}
+			return sum(arr)
+		}
+	},
+	// 合并
+	// arr1.concat(arr2)
+	// [...arr1,...arr2]
+	// 或前边9的push apply
+	// 原理：arr2.map(item=>{arr1.push(item)})
+	// 判断是否包含
+	includeEl: function(arr, el) {
+		return arr.indexOf(el) > -1
+		// return arr.includes(el)
+		// return arr.find(i=>i===el)
+		// return arr.findIndex(i=>i===el)均为ES6
+		// 原理：arr.some(i=>{return i=== el})
+	},
+	// 类数组结构截取（有length属性但不是数组的数据类型）
+	// Array.prototype.slice.call(arguments)
+	// Array.prototype.slice.apply(arguments)
+	// Array.from(arguments)
+	// [...arguments]
+	// slice原理：从start到end的for循环push到result
 
-	}
+	// 给每一项设置值
+	// arr.fill(0)// ES6
+	// arr.map(() => 0)
+
+	// arr.every(xxx)// ES5
+	// arr.some(xxx)// ES5
+	// arr.filter(xxx)// ES5
+
+	// 对象数组转化
+	// Object.keys(obj)// 对象转数组，取key
+	// Object.values(obj)// 对象转数组，取value
+	// Object.entries(obj)// 对象转二维数组，每个元素是长度为2的键和值的数组
+	// Object.fromEntries(arr)// 数组转对象，ES10，谷歌暂未实现，与上变的过程相反
 }
 
+/**
+ *31.模块化示例
+ */
+ // circle.js
+const {PI} = Math
+export const area = (r) => PI * r ** 2
+export const circumference = (r) => PI * r * 2
 
-//数组去重、排序
+// index.js
+import {area} = './circle.js'
+console.log(`圆形面积:${area(2)}`)
+
+/**
+ *32.迭代器生成器示例
+ */
+// stage1
+function *makeRangeIterator(start = 0, end = Infinity, step = 1) {
+    for (let i = start; i < end; i += step) {
+        yield i;
+    }
+}// 实测*贴着function和贴着方法名没有区别;yield起着类似return的效果
+var a = makeRangeIterator(1,10,2)
+a.next() // {value: 1, done: false}
+a.next() // {value: 3, done: false}
+
+// stage2
+function *createIterator(items){
+    for (let i = 0; i< items.length; i++){
+        yield items[i]
+    }
+}
+let iterator = createIterator([1,2,3])
+console.log(iterator.next()); // { value:1, done: false }
+
+// stage3
+function *createIterator(){
+    yield 1
+    yield 2
+    yield 3
+}
+let iterator = createIterator()
+
+console.log(iterator.next().value) //1
+
+/**
+ *33.Proxy/Reflect示例
+ */
+// Proxy/Reflect示例 -- TODO -- 详细了解https://www.cnblogs.com/huansky/p/5687299.html
+const observe = (data, callback) => {
+      return new Proxy(data, {
+            get(target, key) {
+                return Reflect.get(target, key)
+            },
+            set(target, key, value, proxy) {
+                  callback(key, value);
+                  target[key] = value;
+                    return Reflect.set(target, key, value, proxy)
+            }
+      })
+}
+
+const FooBar = { open: false };
+const FooBarObserver = observe(FooBar, (property, value) => {
+  property === 'open' && value 
+          ? console.log('FooBar is open!!!') 
+          : console.log('keep waiting');
+});
+console.log(FooBarObserver.open) // false
+FooBarObserver.open = true // FooBar is open!!!
+
+/**
+ *34.处理图片数据（初步）
+ */
+async function myFetch(url) {
+      let response = await fetch(url)
+      let myBlob = await response.blob()
+
+      let objectURL = URL.createObjectURL(myBlob)
+      let image = document.createElement('img')
+      image.src = objectURL
+      document.body.appendChild(image)
+}
+// myFetch('coffee.jpg')
+
+/**
+ *35.数据加密
+ *@ str-目标字符串
+ *@ len-要保留的长度
+ */
+function encryStr(str, len, aimFlag = '*') {
+	const lastDigits = str.slice(-len)
+	const maskedNumber = lastDigits.padStart(str.length, aimFlag)
+	return maskedNumber
+}
+
+/**
+ *36.计数器，#是ES10的私有
+ */
+class Counter extends HTMLElement {
+      #xValue = 0
+
+      get #x() { 
+          return #xValue
+      }
+      set #x(value) {
+            this.#xValue = value
+            window.requestAnimationFrame(this.#render.bind(this))
+      }
+
+      #clicked() {
+            this.#x++
+      }
+
+      constructor() {
+            super();
+            this.onclick = this.#clicked.bind(this)
+      }
+
+      connectedCallback() { 
+              this.#render()
+      }
+
+      #render() {
+            this.textContent = this.#x.toString()
+      }
+}
+window.customElements.define('num-counter', Counter)
+
+/**
+ *37.记住滚动位置$("html,body").animate({"scrollTop":0})；document.scrollingElement.scrollTop；document.documentElement.scrollTop||document.body.scrollTop
+ $(this).addClass('curr-p-xf').siblings().removeClass('curr-p-xf');浏览器的记忆滚动位置：history.scrollRestoration = 'manual'取消//默认auto记忆
+ */
+ /* 鼠标指针
+ body {
+    cursor: url("path_to_your_image"), default;
+}*/
+// TODO，页面列表滚动，上下定时滚动，有超出则穿插左右滚动
+
+// StringUtil,match,search,(charAt,indexOf)
