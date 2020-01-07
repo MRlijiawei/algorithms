@@ -800,6 +800,19 @@ var ArrayUtil = {
 				return arr
 			}
 			return flatten(arr)
+			// 原理
+			/*function flat(originArr) {
+		        if ({}.toString.call(originArr) === '[object Array]') {
+		            for (let i of originArr) {
+		                if ({}.toString.call(i) === '[object Array]') {
+		                    arguments.callee(i)
+		                } else {
+		                    newArr.push(i)
+		                }
+		            }
+		        }
+		        return newArr;
+		    }*/
 		}
 	},
 	// 去重
