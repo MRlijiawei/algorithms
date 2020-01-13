@@ -1080,3 +1080,129 @@ window.customElements.define('num-counter', Counter)
 // TODO，页面列表滚动，上下定时滚动，有超出则穿插左右滚动
 
 // StringUtil,match,search,(charAt,indexOf)
+
+
+/*
+其他总结
+*/
+1.获取时间的11位毫秒数值
+
+1.1 获取当前时间
+
+Date.now()// new Date()是当前时间的日期对象
+
+1.2 getTime()
+
+new Date().getTime()，可以获取任意时间的数值
+
+1.3 valueOf()
+
+new Date().valueOf()，可以是任意时间
+
+1.4 Date.parse()
+
+Date.parse(new Date())，可以是任意时间
+
+1.5 Number()
+
+Number(new Date())，可以是任意时间
+
+1.6 +
+
++new Date()，可以是任意时间
+1.5和1.6是使用数据类型转换，实际等效于取1.3的valueOf；
+
+几种方法的差异和效率差别很小，百万级别才可能会有几毫秒的差异，这个差异还很可能是跟别的因素有关比如CPU、服务器。
+
+2.浮点数取整
+
+2.1 >>0
+
+2.2 ~~
+
+2.3 |0
+
+2.4 Math.floor()
+
+对于正数4种方法没有差异，对于负数则前3种和第4种会相差1。
+
+ 1 const x = 123.4545
+ 2 x >> 0// 123
+ 3 ~~x// 123
+ 4 x | 0// 123
+ 5 Math.floor(x)// 123
+ 6 
+ 7 const y = -123.45
+ 8 x >> 0// -123
+ 9 ~~x// -123
+10 x | 0// -123
+11 Math.floor(x)// -124
+3.生成n位验证码
+
+总体来说方法是一种（Math.random()），但是可以有多种表达方式。比如
+
+主要方法是：Math.random().toString().slice(-n)，变种可以是将toString()转化为别的如toFixed(不小于n位)，或其他方法。
+当然，Math.random()也有很小很小的概率会产生小于n位的小数，最好是使用try catch包裹或者在截取之前判断一下，不够则补0。
+
+4.生成随机颜色
+
+原理同上，先产生一个6位随机数（如果要使透明度也随机，则是8位），然后转化为16进制，再在开头拼上'#'即可
+
+'#' + Math.random().toString().slice(-6).toString(16)
+
+当然，也有一些其他变种，比如先取整然后转化为16进制再截取
+
+'#' + (Math.random()*0x1000000<<0).toString(16)).slice(-6)
+不过减少运算数可以简写为'#' + Math.random().toString(16).slice(-6)// 最优
+
+这么来看，与前边的写法少了个转换，然后换了下顺序。
+
+当然，也可能会有很小的概率出现特殊情况，比如位数不够。
+
+tip:toString()方法不能直接给数值来使用，但是可以包上一个括号或把数组赋值给变量，或再加个点，或加个空格。
+
+
+
+ 5. 驼峰转下划线
+
+xxx.match(/^[a-z][a-z0-9]+|[A-Z][a-z0-9]*/g).join('_').toLowerCase()
+6.特殊字符转义
+
+function htmlspecialchars (str) {  var str = str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, '&quot;');  return str;}
+
+7.格式化数量（整数）
+
+function formatNum(str) {  return str.split('').reverse().reduce((prev, next, index) => {    return ((index % 3) ? next : (next + ',')) + prev  });}
+
+或'2313123'.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+8.测试质数
+
+function isPrime(n) {  return !(/^.?$|^(..+?)\1+$/).test('1'.repeat(n))}
+
+9.统计字符串中每个字符出现的次数
+
+arr.split('').reduce((p, k) => (p[k]++ || (p[k] = 1), p), {})
+
+10.打分组件
+
+"★★★★★☆☆☆☆☆".slice(5 - rate, 10 - rate)
+
+11.arguments转数组
+
+var argArray = Array.prototype.slice.call(arguments);
+
+// ES6：
+
+var argArray = Array.from(arguments)
+
+// or
+
+var argArray = [...arguments];
+
+
+13.
+
+[1,2] + [3, 4]//"1,23,4"
+14.判断变量类型（想判断是其他类型如isArray只需要将后边的字符换一下即可）
+
+function isObject(value) {  return Object.prototype.toString.call(value).slice(8, -1) === 'Object'';}
