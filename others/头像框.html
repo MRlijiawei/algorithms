@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>闲来瞎写的</title>
+		<style type="text/css">
+			.hd{
+				width: 200px;
+				height: 200px;
+				background-color: #c4c1a621;
+				    margin: 200px;
+    position: relative;
+			}
+			.hd1 {
+				position: absolute;
+				width:150px;
+				height:150px;
+				left: 25px;
+				top: 25px;
+				box-shadow: 0 0 0 0.1em #ffe600ba inset, 0 0 1em #ffe600ba inset;
+    			border-radius: 50%;
+    			animation:scale 1s 0s cubic-bezier(0.5, 0.5, 0.5, 0.5) infinite;
+			}
+			.hd111 {
+				width: 40px;
+				height: 40px;
+				border-radius: 50%;
+				background-color:black;
+				position: absolute;
+			}
+			.hd11 {
+				left: 55px;
+				    top: -40px;
+			}
+			.hd12 {
+				    left: -23px;
+    top: 110px;
+			}
+			.hd13 {
+				    left: 135px;
+    top: 110px;
+			}
+			@-webkit-keyframes scale {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+			@keyframes scale {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+		</style>
+	</head>
+
+	<body style="display: flex;">
+		<div class="hd">
+			<div class="hd1">
+				<div class="hd111 hd11"></div>
+				<div class="hd111 hd12"></div>
+				<div class="hd111 hd13"></div>
+			</div>
+		</div>
+	</body>
+
+</html>
+<script type="text/javascript">
+	setInterval(function() {
+		document.querySelectorAll('.hd111').forEach(e => {
+			e.style.backgroundColor = '#' + Math.random().toString(16).slice(-6)
+		})
+	}, 300)
+</script>
