@@ -776,11 +776,20 @@ function duffArr2(arr, dowhat) {
 })()
 
 /**
-	29.取随机颜色
+	29.取随机颜色（16进制和rgba）
 */
 var getRandomColor = function(){
-  return '#'+Math.floor(Math.random()*16777215).toString(16); 
+  return '#'+Math.floor(Math.random()*16777215).toString(16); // (如果要带透明度只需加两位长度)'#' + Math.random().toString(16).slice(-6)最优
 }
+// 随机生成RGBA颜色
+var  randomRgbaColor = function(min=0, max=255) {
+    let r = min + Math.round(Math.random() * 1000) % (max - min) // 随机生成256以内r值
+    let g = min + Math.round(Math.random() * 1000) % (max - min) // 随机生成256以内g值
+    let b = min + Math.round(Math.random() * 1000) % (max - min) // 随机生成256以内b值
+    // let a = Math.random()// (如果要带透明度只需取一个随机数,`rgb(${r},${g},${b},${a})`)
+    return `rgb(${r},${g},${b})` // 返回rgba(r,g,b,a)格式颜色//
+  }
+
 
 /**
 	30.数组常见方法封装 -- TODO 将各类方法按类别重新封装然后合成一个easyTool插件
@@ -1144,7 +1153,7 @@ Number(new Date())，可以是任意时间
 主要方法是：Math.random().toString().slice(-n)，变种可以是将toString()转化为别的如toFixed(不小于n位)，或其他方法。
 当然，Math.random()也有很小很小的概率会产生小于n位的小数，最好是使用try catch包裹或者在截取之前判断一下，不够则补0。
 
-4.生成随机颜色
+4.生成随机颜色（其他见779行）
 
 原理同上，先产生一个6位随机数（如果要使透明度也随机，则是8位），然后转化为16进制，再在开头拼上'#'即可
 
