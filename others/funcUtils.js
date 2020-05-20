@@ -1091,6 +1091,9 @@ window.customElements.define('num-counter', Counter)
 // StringUtil,match,search,(charAt,indexOf)
 
 
+/*38.获取指定长度n二进制（N进制）*/
+(new Array(n).fill('0').join('') + a.toString(2)).slice(-n)
+
 /*
 其他总结
 */
