@@ -1218,3 +1218,19 @@ var argArray = [...arguments];
 14.判断变量类型（想判断是其他类型如isArray只需要将后边的字符换一下即可）
 
 function isObject(value) {  return Object.prototype.toString.call(value).slice(8, -1) === 'Object'';}
+
+15.判断元素在视口
+function isInViewport(element) {
+	var rect = element.getBoundingClientRect();
+	var html = document.documentElement;
+ 	var top = document.documentElement.clientTop; // 非IE为0，IE为2
+	var left= document.documentElement.clientLeft;
+
+	return (
+	rect.top -top >= 0 &&
+	rect.left -left >= 0 &&
+	rect.bottom -top <= (window.innerHeight || html.clientHeight) &&
+	rect.right -left <= (window.innerWidth || html.clientWidth)
+	);
+}
+// isInViewport($("#addAddrAddControlId8Inp")[0])
