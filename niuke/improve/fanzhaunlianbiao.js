@@ -12,5 +12,5 @@ function ReverseList(pHead)
         pre = cur
         cur = cnext
     }
-    return pre// ???不懂，到底入参是什么实例
+    return pre
 }
